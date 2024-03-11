@@ -70,3 +70,12 @@ $ git switch (branch name)
 # 브랜치 병합
 $ git merge (target-branch name)
 ```
+
+## `vim`
+```
+# 파일 수정
+$ vim (filename)
+$ (write)
+$ ESC
+$ ':wq'(=exit)
+```
