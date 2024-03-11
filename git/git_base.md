@@ -38,6 +38,7 @@ $ git commit -m 'MESSAGE'
 # github 에 원격 저장소(repository) 생성 후 URL 획득
 $ git remote add origin 'URL'
 ```
+여기서 origin을 다른 명칭으로 변경해서 사용해도 되나 그런 경우 push 등에서도 여기서 사용된 명칭을 이용해야함.
 
 ## `push`
 ```
