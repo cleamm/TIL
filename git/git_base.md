@@ -15,7 +15,37 @@ $ git config --global user.email 'ehdgus275@naver.com'
 $ touch <filename> <- 파일 생성
 $ git add <file> <- stage 업로드
 $ git restored staged <file> <- stage 내림
-$ git commit -m 'message' <-푸시
+$ git commit -m 'message' <-커밋
+$ git push origin master <-푸시
 ```
 
 `` ` `` = (quote=백틱)
+
+
+## `init`
+```
+$ git init
+```
+
+## `commit`
+```
+$ git add .
+$ git commit -m 'MESSAGE'
+```
+
+## `remote add`
+```
+# github 에 원격 저장소(repository) 생성 후 URL 획득
+$ git remote add origin 'URL'
+```
+
+## `push`
+```
+$ git push origin master
+```
+
+## `clone`
+```
+# 현재 터미널의 위치에 다운로드
+$ git clone 'remote repo URL'
+```
