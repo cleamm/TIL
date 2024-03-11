@@ -50,3 +50,17 @@ $ git push origin master
 # 현재 터미널의 위치에 다운로드
 $ git clone 'remote repo URL'
 ```
+
+## `branch`
+```
+# 브랜치 생성
+$ git branch (branch name)
+# 브랜치 삭제
+$ git branch -d (branch name)
+```
+
+# `switch`
+```
+# 브랜치 변경(head 변경)
+$ git switch (branch name)
+```
