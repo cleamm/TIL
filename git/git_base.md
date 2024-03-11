@@ -59,8 +59,14 @@ $ git branch (branch name)
 $ git branch -d (branch name)
 ```
 
-# `switch`
+## `switch`
 ```
 # 브랜치 변경(head 변경)
 $ git switch (branch name)
+```
+
+## `merge`
+```
+# 브랜치 병합
+$ git merge (target-branch name)
 ```
