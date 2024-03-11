@@ -63,6 +63,8 @@ $ git branch -d (branch name)
 ```
 # 브랜치 변경(head 변경)
 $ git switch (branch name)
+# 브랜치 생성 및 변경
+$ git switch -c (new-branch name)
 ```
 
 ## `merge`
