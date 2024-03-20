@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>연습1</title>
+    <style>
+        td#boldstyle{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>연습1</h1>
+    <table border="1">
+        <tr style="font-weight: bold;">
+            <td>이름</td>
+            <td>나이</td>
+            <td>주소</td>
+        </tr>
+        <tr>
+            <td>홍길동</td>
+            <td>20세</td>
+            <td>서울시 마포구 노고산동</td>
+        </tr>
+        <tr>
+            <td id="boldstyle">특기</td>
+            <td colspan="2">먹기</td>
+        </tr>
+        <tr>
+            <td rowspan="2" id="boldstyle">신체</td> 
+            <td colspan="2">180.0cm</td>
+        </tr>
+        <tr>
+            <td colspan="2">83kg</td>
+        </tr>
+    </table>
+</body>
+</html>
