@@ -1,0 +1,7 @@
+postpone,연기하다
+asset,유용한 사람/자산
+deposit,두금
+gratitude,감사의 기분
+budget,예산
+stroll,도보
+degree,학위
