@@ -1,9 +1,3 @@
-candidate지원자
-piece작품
-revenue총 수익
-likewise와마찬가지로
-produce농작물/제조
-vehicle차량
-successful성공
-auditorium강당
-municipal시정의
+reduce,감소
+likewise,와마찬가지로
+xcuse,E
