@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<head>
+    <title>title</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <script>
+        /*
+        const myfunc = function(){ 이것은 이름없는 '익명의 함수'라고 함.
+            console.log('함수입니다 1');
+            console.log('함수입니다 2');
+            console.log('함수입니다 3');
+        }
+        */
+
+        /*
+        function myfunc() { // 여기는 myfunc이라는 함수 이름이 존재
+            console.log('함수입니다 1');
+            console.log('함수입니다 2');
+            console.log('함수입니다 3');
+        }
+        myfunc();
+        console.log(myfunc)
+        console.log(typeof myfunc)
+        */
+
+        /*
+        function f(x){
+            return x*x;
+        }
+        console.log(f(5));
+        */
+
+        /*
+        function isLeapYear(y){
+            if(y % 400 == 0){
+                console.log('윤년');
+            }
+            else if(y % 100 == 0){
+                console.log('평년');
+            }else if(y % 4 == 0){
+                console.log('윤년');
+            }else{
+                console.log('평년');
+            }
+        }
+        inputYear = prompt('연도 입력', '');
+        isLeapYear(Number(inputYear));
+
+        
+        function isLeapYear(y){
+        //윤년이면 true, 평년이면 false
+        return (y%4==0) && (y%100!=0) || (y%400==0)
+        }
+        console.log(isLeapYear(2000)) //true
+        console.log(isLeapYear(2020)) //true
+        console.log(isLeapYear(2040)) //true
+        console.log(isLeapYear(2100)) //false
+        if(isLeapYear(2100)){
+            cosole.log("윤년")
+        }
+        else{
+            cosole.log("평년")
+        }
+        */
+
+        /*
+        function sumAll(s,e){
+            let output = 0;
+            for(let i = s; i <= e; i++){
+                output += i;
+            }
+            return output;
+        }
+        console.log(`1~100까지의 합: ${sumAll(1,100)}`);
+        */
+
+        /*
+        testArr = [30, 50, 20, 10, 40]
+        function getMin(arr){
+            res = arr[0];
+            for(item of arr){
+                if(res > item){
+                    res = item;
+                }
+            }
+            return res;
+        }
+        console.log(`최소값=${getMin(testArr)}`);
+
+        */
+
+        /*
+        function var_arg(x, ...abc){  // 매개변수의 개수가 일정하지 않을 때 사용하는 방법. 매개변수에 (...변수)를 입력하면 됨
+            console.log(abc);
+            console.log(typeof(x))
+            if(typeof(x)=='number'){
+                console.log('it is number!');
+            }else if(Array.isArray(x)){ // array는 typeof가 지원이 안됨. 이에따라 Array.isArray를 사용해서 확인해야됨
+                console.log('it is array!');
+            }
+        }
+        var_arg(10,20);
+        var_arg(10,20,30,40,50);
+
+        // 위와 달리 파이썬에서는 *변수(return: 튜플), **변수(return: 딕셔너리) 이런식으로 매개변수가 가변적인 개수일 때 사용하는 방법이 있음
+        */
+
+        // function earnings(timeMoney, hour){
+        //     let res;
+        //     res = timeMoney * hour;
+        //     return res;
+        // }
+        // tm = prompt('시급','');
+        // h = prompt('시간','');
+        // console.log(earnings(tm, h));
+
+        /*
+        function earnings(name, wage=10000, hour=40, year=new Date().getFullYear()){
+            console.log(name);
+            console.log(wage);
+            console.log(hour);
+            console.log(year);
+        }
+        // n = prompt('이름','');
+        // tm = prompt('시급','');
+        // h = prompt('시간','');
+        earnings('홍길동');
+        earnings('임꺽정', 10000);
+        earnings('이순신', 12000, 60);
+        // console.log(earnings(n, tm, h));
+        */
+
+        /*
+        function test(){
+            console.log(arguments); // arguments를 사용하면 매개변수를 받지 않는 함수임에도 들어왔을 때 사용할 수 있게 됨.
+            console.log(arguments.length);
+            for (i = 0; i< arguments.length; i++){
+                console.log(arguments[i]);
+            }
+        }
+        test(1,2)
+        */
+
+        //콜백함수 : 매개변수로 전달되는 함수 (파이썬에서는 안됨)
+        /*
+        function f(cb){
+            for(i=0; i<3; i++){
+                cb(i);
+            }
+        }
+        function myPrint(i){
+            console.log(`${i+1}번째 콜백함수 호출`);
+        }
+        // f(myPrint)
+        f(function(i){
+            console.log(`${i+1}번째 콜백함수 호출`);
+        })
+        */
+
+        // forEach : 배열이 가지고 있는 함수, 배열 내부 요소를 이용해서 콜백함수 호출
+
+        const num = [10, 20, 30];
+        /*
+        num.forEach(function(value, index, array){
+            console.log(`${index}번째 요소: ${value}`);
+        });
+        */
+
+        /*
+        // map : 배열이 가지고 있는 함수, 콜백 함수의 리턴 결과로 새로운 배열 생성
+        res = num.map(function(value, index, array){
+            return 2 * value;
+        })
+        console.log(res);
+        */
+
+        /*
+        const num2 = [10, 20, 30, 40, 50];
+        // filter : 배열이 가지고 있는 함수, 콜백 함수의 리턴값이 true에 해당하는 것들로 새로운 배열 생성
+        res = num2.filter(function(value, index, array){
+            return value%20 == 0;
+        })
+        console.log(res);
+
+        const num3 = [1,2,3,4,5,6];
+        console.log(num3.filter(value => value%2 == 0))
+        console.log(num3.map((value) => value*2)) // value에 괄호는 씌워도 그만 안씌워도 그만임
+        */
+
+        /*
+        
+        // setTimeout(콜백함수, 시간(ms)) : 특정 시간 이후에 콜백함수를 1회 호출
+        // setInterval(콜백함수, 시간(ms)) : 특정 시간 간격으로 콜백함수를 호출
+        // clearTimeout(타이머id) : setInterval함수로 설정한 타이머 제거
+        sec = 1
+        setTimeout(() => {
+            console.log(`${sec}초후에 실행`);
+        }, sec*1000)
+        cnt = 0
+        setInterval(() => {
+            console.log(`${sec}초후에 실행 - ${cnt}번째`); cnt++;
+        }, sec*1000)
+        */
+
+        /*
+        console.log('5초후 타이머 종료');
+        setTimeout(() => {
+            clearInterval(intervalId);
+        }, 5 * 1000)
+        sec = 1
+        cnt = 0;
+        intervalId = setInterval(() => {
+            console.log(`${sec}초후에 실행 - ${cnt}번째`); cnt++;
+        }, sec*1000)
+        */
+        
+    </script>
+    <script>
+        // 1. 변수 x가 10보다 크고 20보다 작을 때 변수 X를 출력하는 조건식을 완성하라
+        x = 12
+        if(x > 10 && 20 > x){
+            console.log(x)
+        }
+
+        // 2. for문을 사용하여 0부터 10미만의 정수 중에서 짝수만을 작은 수부터 출력하시오.
+        for (let i = 0; i<10; i++){
+            if(i%2 ==0){
+                console.log(i);
+            }
+        }
+
+        // 3. for문을 사용하여 0부터 10미만의 정수 중에서 짝수만을 작은 수부터 문자열로 출력하시오.
+        for (let i = 0; i<10; i++){
+            if(i%2 ==0){
+                console.log(String(i), typeof(String(i)));
+            }
+        }
+
+        // 4. for문을 사용하여 0부터 10미만의 정수 중에서 홀수만을 큰수부터 출력하시오.
+        for (let i = 9; i>=0; i--){
+            if(i%2 ==1){
+                console.log(i);
+            }
+        }
+
+        // 5. while문을 사용하여 0 부터 10 미만의 정수 중에서 짝수만을 작은 수부터 출력하시오.
+        n = 0;
+        while(n<10){
+            if(n%2==0){
+                console.log(n);
+            }
+            n ++;
+        }
+
+        // 6. while문을 사용하여 0 부터 10 미만의 정수 중에서 홀수만을 큰수부터 출력하시오.
+        n = 9;
+        while(n>=0){
+            if(n%2==1){
+                console.log(n);
+            }
+            n--;
+        }
+
+        // 7. for 문을 사용하여 0부터 10미만의 정수의 합을 출력하시오.
+        let s = 0;
+        for (let i = 0; i< 10; i++){
+            s += i;
+        }
+        console.log(s);
+
+        // 8. 1부터 20 미만의 정수 중에서 2 또는 3의 배수가 아닌 수의 총합을 구하시오.
+        s = 0;
+        for(let i = 0; i<20; i++){
+            if(i % 2 != 0 && i % 3 != 0){
+                s += i;
+            }
+        }
+        console.log(s);
+
+        // 9. 1부터 20 미만의 정수 중에서 2 또는 3의 배수인 수의 총합을 구하시오.
+        s = 0;
+        for(let i = 0; i<20; i++){
+            if(i % 2 == 0 || i % 3 == 0){
+                s += i;
+            }
+        }
+        console.log(s);
+
+        // 10. 두 개의 주사위를 던졌을 때, 눈의 합이 6이 되는 모든 경우의 수를 출력하시오.
+        for(let j = 1; j < 7; j++){
+            for(let i = 1; i < 7; i ++){
+                if(j + i == 6){
+                    console.log(j, i)
+                }
+            }
+        }
+        
+        
+    </script>
+</body>
