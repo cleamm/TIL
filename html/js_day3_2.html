@@ -47,24 +47,31 @@
 
             
             // 2. 다음과 같이 출력하시오
-            cnt = 2
-            for(let i = 0; i<3; i++){
-                console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
-                cnt --;
+            num = 9
+            cnt = num/2
+            for(let i = 0; i<num; i++){
+                if(i < num/2){
+                    console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
+                    cnt --;
+                }
+                else{
+                    cnt ++;
+                    console.log(' '.repeat(cnt+1)+'*'+ '*'.repeat(num-2-cnt*2))
+                }
             }
-            console.log('')
+
             ///////////////////  경계선  //////////////////////
-            cnt = 2
+            // cnt = 2
             
-            for(let i = 0; i<3; i++){
-                console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
-                cnt --;
-            }
-            cnt = 1
-            for(let i = 1; i>=0; i--){
-                console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
-                cnt ++;
-            }
+            // for(let i = 0; i<3; i++){
+            //     console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
+            //     cnt --;
+            // }
+            // cnt = 1
+            // for(let i = 1; i>=0; i--){
+            //     console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
+            //     cnt ++;
+            // }
 
             // 3. 로또 프로그램을 작성하시오.
             lotto = [Math.floor(Math.random()*45+1)]
