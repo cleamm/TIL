@@ -1,0 +1,167 @@
+<html>
+    <body>
+        <script>
+            const mypet={
+                name:'하늘',
+                eat:function(food){
+                    // alert(this.name+'은'+food+'먹습니다');
+                    console.log(this.name+'은'+food+'먹습니다');
+                }
+            }
+            mypet.eat('개밥');
+        
+            const product = {
+                제품명: '망고',
+                유형: '당절임',
+                성분: '망고,설탕',
+                원산지: '필리핀',
+            }
+            console.log(product['제품명']);
+            console.log(product.성분);
+
+            const student = {}
+            student.이름 = '홍길동',
+            student.취미 = '영화감상',
+            student.장래희망 = '데이터사이언티스트'
+
+            console.log(student);
+
+            // stringify(): javascript 객체를 json 문자열로 변환
+            delete student.장래희망
+            console.log(JSON.stringify(student, null, 2))
+
+            // 함수 선언 방법 : function(){}  or () => {}
+            const test = {
+                a : function(){ // 일반적인 함수
+                    console.log(this);
+                },
+                b: () => { // js 실행시 window에 대한 정보가 나옴(console로 출력된 윈도우는 크롬'창'을 의미함)
+                    console.log(this);
+                }
+            }
+            test.a()
+            test.b()
+
+            // 객체 자료형 : 속성, 메서드를 갖는 객체가 갖는 자료형으로는 배열, 함수
+            // 배열도 객체임.
+            const arr = []
+            arr.age = 35;
+            console.log(arr) // [age:35]
+
+            function f(){}
+            f.age = 20;
+            console.log(f.age)
+            // 기본 자료형 : 객체 아님, 속성을 가질 수 없음. - 숫자, 문자, 불린
+            const x = 100;
+            x.name = '홍길동'; // undefined
+            console.log(x.name);
+            // 기본 자료형이지만 객체로 정의
+            // 숫자 -> 숫자객체(Number), 문자->문자객체(String), 불린->불린객체(Boolean)
+            const obj_num = new Number(100);
+            console.log(typeof obj_num); // object 출력됨
+            obj_num.name = 'number임';
+            console.log(obj_num.name);
+
+            msg = '안녕하세요';
+            obj_msg = new String(msg);
+            obj_msg.who = '홍길동';
+            console.log(obj_msg.who);
+
+            const msg2 = 'hi'
+            msg2.who = '임꺽정' // 일시적 저장
+            console.log(msg2.who);
+
+            // 객체자료형.prototype.메서드명 = function(){}
+            // prototype 객체에 속성 또는 메서드를 추가하면, 모든 객체에서 추가한 속성과 메서드를 사용할 수 있음.
+            // Number 클래스(객체)에 power 메서드를 추가해라
+            /*
+            Number.prototype.power = function(n){
+                return this.valueOf()**n; // this.valueOf() = 3
+            }
+            const a = 3;
+            console.log(a.power(2));
+            
+            const s = 'hello'
+            console.log(s.indexOf('h')) //0
+            console.log(s.indexOf('ello')) //1
+            console.log(s.indexOf('hi')) //-1
+            */
+
+            String.prototype.pp = function(n){
+                return this.valueOf() + n;
+            }
+            const b = 'aa';
+            console.log(b.pp('공부'));
+
+            // 문자열의 존재 유무를 조사하는 함수
+            /*
+            String.prototype.공부한다 = function(food){
+                if(food == '바나나'){
+                    console.log('열심히 공부한다')
+                }
+            }
+            const j_monkey = '엉덩이가빨간원숭이'
+            j_monkey.공부한다('바나나');
+            */
+
+            String.prototype.contain=function(data){
+                return this.indexOf(data)>=0
+                //this는 a2("안녕하세요")를 의미함
+                //"안녕하세요".indexOf("안녕")
+            }
+
+            const a2="안녕하세요" //a2는 "안녕하세요" 문자열이 저장된 객체
+            console.log(a2.contain("안녕"))
+            //a2는 문자열 객체이므로 String클래스가 가지고 있는 메서드, 속성 사용가능
+
+            const a3="안녕하세요" //a3는 "안녕하세요" 문자열이 저장된 객체
+            console.log(a3.contain("바이"))
+
+            //Array객체(배열)에 myContain메서드를 새롭게 추가
+            //myContain메서드 기능은 특정 데이터가 배열에 있는지 여부를 출력
+
+            Array.prototype.myContain = function(data){
+                console.log(this) //  [10,20,30]  리스트가 출력됨
+                return this.indexOf(data)>=0;
+            }
+            const arr2 = [10,20,30]
+            console.log(arr2.myContain(20)) // true
+            console.log(arr2.myContain(50)) // false
+            const n2 = 123.456789
+            console.log(n2);
+            console.log(n2.toFixed(2)); // 소수 셋째자리에서 반올림 후 2자리까지만 보여줌
+
+            const s3="  안녕   "
+            console.log(s3)
+            console.log(s3.trim())//문자열 앞/뒤 공백 제거
+
+            input = '   시가,종가,거래량   '
+            s_input=input.trim()
+            ss_input=s_input.split(",")
+            console.log(s_input)
+            console.log(ss_input)
+
+
+            // csv, XML, JSON - csv와 JSON은 가벼운데 반면 XML은 무거움
+            
+            const data = {name: '홍길동', age:30, addr: '서울특별시'};
+            console.log(data); 
+            console.log(JSON.stringify());
+            // 객체 -> JSON 문자열로 변환하여 출력함
+            data_to_json = JSON.stringify(data, null, 4) 
+            console.log(data_to_json)
+
+            // json 문자열 -> 자바스크립트 객체로 변환하여 출력
+            const json_data = JSON.stringify(data); // 객체 -> json
+            console.log(JSON.parse(json_data)); // json -> 객체
+
+            //Math 객체
+
+            const n5 = Math.random();
+            // console.log((n5 * 10) -5) // 0~10까지 -5
+            console.log((n5*45).toFixed(0))
+            console.log(Math.floor(n5*45+1)) // 소수점 내림
+        </script>
+    </body>
+    
+</html>

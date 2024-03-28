@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <script src="js_day3_1.js"></script> <!-- 이렇게 하면 파일을 불러오게 됨. 다음 스크립트 태그에서 그대로 이용이 가능함. -->
+        <script>
+            console.log(dd);
+
+            /*
+            const obj = {
+                name: '자바스크립트',
+                r_lang: 'R언어'
+            }
+            if(obj.name){
+                console.log('name 속성 있음');
+            }else{
+                console.log('name 속성 없음');
+            }
+
+            obj.addr != undefined ? obj.addr:'서울시' // 삼항연산자
+            console.log(obj)
+
+            obj.python != undefined ? obj.python : obj.python = '파이썬'
+            console.log(obj)
+            */
+
+
+            /*
+            if(obj.name != undefined){
+                console.log('name 속성 있음');
+            }else{
+                console.log('name 속성 없음');
+            }
+
+            if(obj.addr != undefined){
+                console.log('addr 속성 있음')
+            }else{
+                console.log('addr 속성 없음')
+            }
+            */
+
+            let [x,y] = [1,2] // 변수에 한꺼번에 담기
+            console.log(x,y)
+
+
+            // [자바스크립트]
+            // 1. 여러분 개인에 대한 정보를 바탕으로 객체를 생성하고 출력해보세요.
+            const IAM = {name: '최동현', age: 26, addr: '천안', education: 'college graduate'}
+
+            
+            // 2. 다음과 같이 출력하시오
+            cnt = 2
+            for(let i = 0; i<3; i++){
+                console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
+                cnt --;
+            }
+            console.log('')
+            ///////////////////  경계선  //////////////////////
+            cnt = 2
+            
+            for(let i = 0; i<3; i++){
+                console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
+                cnt --;
+            }
+            cnt = 1
+            for(let i = 1; i>=0; i--){
+                console.log(' '.repeat(cnt)+'*'+ '*'.repeat(i*2))
+                cnt ++;
+            }
+
+            // 3. 로또 프로그램을 작성하시오.
+            lotto = [Math.floor(Math.random()*45+1)]
+            while(lotto.length < 6){
+                num = Math.floor(Math.random()*45+1);
+                check = false;
+                for(let i = 0; i<lotto.length; i++){
+                    if(lotto[i] != num){
+                        if(i == lotto.length-1){
+                            check = true;
+                        }
+                    }
+                    else{
+                        break
+                    }
+                }
+                if(check == true){
+                    lotto.push(num);
+                    check = false;
+                }
+            }
+            
+            console.log(lotto)
+
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
