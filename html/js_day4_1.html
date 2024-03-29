@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <script>
+            document.addEventListener('DOMContentLoaded', ()=>{
+                const header = document.querySelectorAll('h1') // 태그에 접근
+                header.forEach((head) => {
+                    head.textContent = '안녕하세요'
+                    head.style.color = 'blue'
+                    head.style.backgroundColor = 'yellow'
+                    head.style.padding = '10px'
+                })                    
+                
+                const a = document.querySelector('#a');
+                const b = document.querySelector('#b');
+                a.textContent = '<h1>a영역에 출력되는 텍스트</h1>'
+                b.innerHTML='<h1>b영역에 출력되는 텍스트<h2>'
+                
+                // 태그, #아이디, .클래스, [속성=값], 선택자
+
+                /*
+                header.textContent='안녕하세요'
+                header.style.color = 'blue'
+                header.style.backgroundColor = 'yellow'
+                header.style.padding = '10px'
+                */
+            })
+        </script>
+    </script>
+    </head>
+    <body>
+        <h1></h1>
+        <h1></h1>
+        <h1></h1>
+        <h1></h1>
+
+        <div id="a"></div>
+        <div id="b"></div>
+    </body>
+</html>

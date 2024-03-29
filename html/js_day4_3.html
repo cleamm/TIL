@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <script>
+            //             클릭 횟수 : 0
+            // 이벤트 연결 | 이벤트 제거 | 클릭 증가 | 클릭 감소
+            // 이벤트 연결 상태: 해제
+            // 1) 이벤트 연결 -> 이벤트 연결 상태: 연결 ->
+            // 클릭 증가 -> 클릭 횟수 : 0,1,2,3...
+            // 2) 이벤트 연결 -> 이벤트 연결 상태: 연결 ->
+            // 클릭 감소 -> 클릭 횟수 : 0,-1,-2,-3...
+            // 3) 이벤트 연결 상태: 연결 -> 클릭 증가  -> 클릭 횟수 : 0,1,2,3
+            // -> 클릭 감소 -> 클릭 횟수 : 2,1,0,-1,...
+
+            document.addEventListener('DOMContentLoaded', () =>{
+                // h1태그에서 클릭이 발생되면 횟수를 증가
+                let counter = 0;
+                let isConnect = false;
+                let countUp = true;
+
+                const h1 = document.querySelector('h1');
+                const p = document.querySelector('p');
+                const div = document.querySelector('div');
+                const connectButton = document.querySelector('#connect');
+                const disconnectButton = document.querySelector('#disconnect');
+                const clickUp = document.querySelector('#click_up');
+                const clickDown = document.querySelector('#click_down');
+
+
+                // h1.addEventListener('click',()=>{
+                //     if(isConnect){
+                //         counter ++ ;
+                //         h1.textContent = `클릭횟수: ${counter}`
+                //     }
+                // })
+
+                // 새로운 함수 정의 - 카운터 변수의 값을 증가시킴
+                const listener = () => {
+                    if(countUp == true){
+                        counter ++;
+                    }else{
+                        counter --;                        
+                    }
+                    h1.textContent = `클릭 횟수 : ${counter}`;
+                }
+
+                // 이벤트 연결 상태 : 해제 -> 연결 -> 클릭시 횟수 증가
+                connectButton.addEventListener('click',()=>{
+                    if(isConnect == false){
+                        h1.addEventListener('click', listener); // 이벤트 생성
+                        p.textContent = '이벤트 연결 상태 : 연결'
+                        isConnect = true;
+                    }
+                })
+                // 이벤트 연결 상태 : 연결 -> 해제 -> 클릭 횟수 변동 없음
+                disconnectButton.addEventListener('click',()=>{
+                    if(isConnect == true){
+                        h1.removeEventListener('click', listener); // 이벤트 해제
+                        p.textContent = '이벤트 연결 상태 : 해제'
+                        isConnect = false;
+                    }
+                })
+                clickUp.addEventListener('click',()=>{
+                    countUp = true;
+                    div.textContent = '증감 상태 : 증가'
+                })
+                clickDown.addEventListener('click',()=>{
+                    countUp = false;
+                    div.textContent = '증감 상태 : 감소'
+                })
+            })
+        </script>
+    </head>
+    <body>
+        <h1>클릭횟수: 0</h1>
+        <button id="connect">이벤트 연결</button>
+        <button id="disconnect">이벤트 제거</button>
+        <button id="click_up">클릭 증가</button>
+        <button id="click_down">클릭 감소</button>
+        <p>이벤트 연결 상태: 해제</p>
+        <div>증감 상태 : 증가</div>
+    </body>
+</html>

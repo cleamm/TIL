@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>title</title>
+        <script>
+            // document.addEventListener('DOMContentLoaded', ()=>{
+            //     const rects = document.querySelectorAll('.rect');
+            //     rects.forEach((rect, index)=>{
+            //         const width = (index + 1) * 100
+            //         const src = `https://placekitten.com/${width}/250` // 현재 주소가 접속이 잘 안됨;;
+            //         rect.setAttribute('src', src)
+            //     })
+            // })
+                document.addEventListener('DOMContentLoaded', ()=>{
+                    // 문서 객체 이동
+                    const divA = document.querySelector('#first');
+                    const divB = document.querySelector('#second');
+                    const myH2 = document.createElement('h2');
+                    myH2.textContent = '이동하는 H2 태그'
+
+                    const toFirst = ()=>{
+                        divA.appendChild(myH2);
+                        setTimeout(toSecond, 2000);
+                    }
+                    const toSecond = ()=>{
+                        divB.appendChild(myH2);
+                        setTimeout(toFirst, 2000); // 계속 번갈아가며 위치가 바뀌게 됨ㅋㅋ
+                    }
+
+                    toFirst()
+                    // 문서 객체 추가
+                    const myH1 = document.createElement('h1'); // h1 태그 추가
+                    myH1.textContent = '문서 객체 추가'
+                    myH1.style.backgroundColor = 'black'
+                    myH1.style.color = 'white'
+                    document.body.appendChild(myH1);
+                    
+
+
+                    /*
+                    const divs = document.querySelectorAll('body > div');
+                    divs.forEach((d, i)=>{
+                        console.log(d, i);
+                        const v = i*10;
+                        d.style.height = `20px`;
+                        d.style.backgroundColor = `rgba(${v},${v},${v})`;
+                    })
+                    */
+                })
+        </script>
+    </head>
+    <body>
+        <!-- <img class="rect" src="" alt="">
+        <img class="rect" src="" alt="">
+        <img class="rect" src="" alt="">
+        <img class="rect" src="" alt=""> -->
+        
+        <div id="first"><h1>첫번째 div태그</h1></div>
+        <div id="second"><h1>두번째 div태그</h1></div>
+
+
+        css:background-color, js:backgroundColor
+        css:font-size, js:fontSize
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+
+        <!-- 부모객체.appendChild(자식객체) -->
+    </body>
+</html>

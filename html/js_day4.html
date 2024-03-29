@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script>
+            const h1 = (text) => `<h1>${text}</h1>`
+            // DOMContentLoaded 이벤트는 웹 문서를 모두 읽고 나서 발생됨
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.innerHTML += h1('1번째 script 태그');
+            })
+            // document.body.innerHTML += h1('1번째 script 태그');
+            // 위의 코드가 실행되는데 body가 생성되기 전에 입력하려고 하므로 에러발생
+        </script>
+            
+    </head>
+    <body>
+        <!-- html - 요소가 있음(ex. html, body, table, a, p, span, tbody, thead, div, ...) -->
+        <!-- js - 문서객체(html의 요소와 동일하나 표현만 다름) -> 조합 -> 문서 객체 모델(Document Object Model = DOM) -->
+        <!-- head 태그 내부의 script 태그는 body 태그에 있는 문서 객체에 접근할 수 없음 -->
+        <!-- 화면 body 태그에 있는 문서 객체를 모두 읽을 때까지 기다려야 함 -->
+
+        <script>
+            document.body.innerHTML += h1('2번째 script 태그');
+        </script>
+    </body>
+</html>
