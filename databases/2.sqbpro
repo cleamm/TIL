@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/fkfma/Desktop/국비교육-AI웹서비스/TIL/databases/첫번째데이터베이스.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1442"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,3:mainPet"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Pet" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="25"/><column index="2" value="88"/><column index="3" value="58"/><column index="4" value="86"/><column index="5" value="59"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">-- CREATE TABLE &quot;Customer&quot; (
+-- 	&quot;id&quot;	INTEGER NOT NULL,
+-- 	&quot;name&quot;	INTEGER NOT NULL,
+-- 	&quot;addr&quot;	INTEGER,
+-- 	&quot;tel&quot;	INTEGER,
+-- 	&quot;job&quot;	INTEGER,
+-- 	&quot;point&quot;	INTEGER NOT NULL,
+-- 	PRIMARY KEY(&quot;id&quot; AUTOINCREMENT)
+-- );
+
+insert into Customer(id, name, addr, tel, job, point) 
+values (1, '홍길동', '서울', '010-1234-5678',  '회사원', 1000),(2, '김돌쇠', '인천', '', '', 100);
+
+select name from Customer where name='홍길동';
+select * from Customer where name='홍길동';
+update Customer set addr = '천안';
+select * from Customer;
+delete from Customer;</sql><sql name="day1-1.sql">/*
+delete from Ppap;
+insert into Ppap
+values (1, '홍길동', '1988-08-28');
+
+insert into Ppap(id, name, birthday) values (2, '이순신', '1000-10-10');
+
+insert into Ppap(name, birthday) values('김길동','1988-08-28'), ('박길동', '1988-08-28');
+*/
+delete from practice0402;
+insert into practice0402(id, name, addr, tel) 
+values (1, '이명박', '서울시', '010-1234-5678'), (2, '박근혜', '인천시','010-1111-2222');
+
+select * from practice0402;
+
+update practice0402 set name='문재인'; -- where = 1 이라고 하면 id값이 지정됨
+
+select * from practice0402 where addr='서울시';</sql><current_tab id="0"/></tab_sql></sqlb_project>
