@@ -1,7 +1,7 @@
 use 한빛무역;
 select * from 고객;
 select char_length('hello');
-char_length("반갑습니다"),
+select char_length("반갑습니다"),
 length("hello"),
 length("반갑습니다");
 
