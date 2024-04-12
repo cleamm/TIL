@@ -1,0 +1,74 @@
+장고: 웹 프레임워크는 웹 프로그램을 좀더 쉽고 빠르게 만들어주는 기반
+세션이란 클라이언트와 서버가 연결되어져 있는 것.
+쿠키, 세션, 로그인/아웃, DB, 관리자, 보안 등등 처리 필요
+sql injection(sql을 실행시키면 로그인됨)
+
+$id = $_REQUEST['id];
+$query = "SELECT name, email FROM users WHERE id = '1' or '1'='1'; 이렇게 입력하면 select문이 실행됨;;;
+id: test
+pw: 1234
+
+관리자아이디 : admin, webmaster, master, .... (주된 기본 아이디)
+id: admin
+pw : '1' or '1'='1'
+"SELECT 로그인성공 FROM users WHERE id="admin" and pw=1234
+즉 위와 같은 방식이 된다면 아이디만 알아도 해킹이 되며 관리자 계정에 로그인이 되면 가입자 모두의 정보가 유출될 수 있음.
+sql 인젝션에 의한 공격이 보통 해킹순위 1,2위를 다툼
+
+장고는 빠르게 웹을 제작, 유지보수, 관리가 됨
+장고는 html, css, javascript는 알아야됨
+
+가상환경 설치방법
+
+1. 명령 프롬프트(cmd) 열기
+2. 'cd \'(실행후 C드라이브에 있어야됨)
+3. mkdir venvs(venvs 폴더생성)
+4. cd venvs 
+5. python -m venv mysite(가상환경이름) 
+6. cd mysite
+7. cd Scripts
+8. 'activate' 엔터(가상환경 진입)
+이때 좌측에 (mysite) 이렇게 되어 있는지 확인
+9. 'deactivate' 엔터(가상환경 종료)
+
+프로젝트 진행
+
+1. 장고 프로젝트를 실행할 위치로 이동
+(여기서는 cd \ -> mkdir projects -> cd projects)
+2. 해당 위치에서 윈도우 기준 'c:\venvs\mysite\Scripts\activate' 작성후 실행
+(맥에서는 source /Users/컴퓨터명/venvs/mysite/bin/activate)
+위의 과정을 거치면 가상환경 실행전의 위치에서 가상환경에 진입하게 됨
+3. mkdir mysite(여기서는 가상환경명으로 생성. 실제는 플젝명으로 할듯)
+4. cd mysite
+5. django-admin startproject config . 이 문자을 입력
+6. dir/w 를 입력하여 파일 확인(1개파일, 3개 디렉터리)
+7. python manage.py runserver 실행
+이때 화면에 (The install worked successfully! Congratulations!)+로켓이 나와야 함
+주소는 127.0.0.1:8000(물리주소:논리주소)
+
+
+다른 내용
+
+1. win + R 실행
+2. sysdm.cpl 입력 (시스템 속성 열기)
+3. 고급(탭) - 환경 변수 클릭
+4. 사용자 변수의 Path 열기
+5. 새로 만들기 - 'c:\venvs' 입력
+6. 확인으로 전부 닫음
+7. mysite 파일을 처음에 가상환경을 만들었던 폴더(venvs) 안에 넣기
+(여기서는 c:\venvs 경로에 mysite.cmd 파일을 위치하도록 설정)
+8. 명령프롬프트를 새로 열어서 mysite 입력후 실행 = 가상환경 진입
+9. 좌측에 (mysite)로 세팅되었는지 확인
+종료는 ctrl + c
+
+파이참 세팅
+
+1. projects - mysite 폴더 열기
+2. settings 진입
+3. 좌측 리스트에서 Project:mysite - python interpreter 클릭
+4. add interpreter 클릭
+5. Existing 클릭후 venvs - mysite - Scripts - python.exe 로 설정
+6. 이후 확인으로 닫기
+7. 파일중 settings.py 열기
+8. LANGUAGE_CODE = 'ko-kr', TIME_ZONE = 'Asia/Seoul' 이렇게 수정
+위를 진행하면 페이지가 한글로 바뀌며 페이지의 시간대가 한국 시간대로 변경
