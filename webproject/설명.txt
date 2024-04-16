@@ -31,7 +31,7 @@ sql 인젝션에 의한 공격이 보통 해킹순위 1,2위를 다툼
 이때 좌측에 (mysite) 이렇게 되어 있는지 확인
 9. 'deactivate' 엔터(가상환경 종료)
 
-프로젝트 진행
+프로젝트 진행(참고용: https://wikidocs.net/73306)
 
 1. 장고 프로젝트를 실행할 위치로 이동
 (여기서는 cd \ -> mkdir projects -> cd projects)
@@ -61,6 +61,7 @@ sql 인젝션에 의한 공격이 보통 해킹순위 1,2위를 다툼
 9. 좌측에 (mysite)로 세팅되었는지 확인
 종료는 ctrl + c
 
+
 파이참 세팅
 
 1. projects - mysite 폴더 열기
@@ -72,3 +73,144 @@ sql 인젝션에 의한 공격이 보통 해킹순위 1,2위를 다툼
 7. 파일중 settings.py 열기
 8. LANGUAGE_CODE = 'ko-kr', TIME_ZONE = 'Asia/Seoul' 이렇게 수정
 위를 진행하면 페이지가 한글로 바뀌며 페이지의 시간대가 한국 시간대로 변경
+
+--------------------------------------------------------------------------------
+
+
+2일차 (CRUD, 목표: 게시판 만들기 시작)
+
+웹프로그래밍
+http 메시지 : 서버와 클라이언트가 주고받는 메시지
+http 메시지 구조 : 스타트라인(요청request/응답response), 헤더header, 블랭크blank(빈줄), 바디body(본문)
+get/post 방식
+get은 주소에 정보가 보이지만 post는 주소에 url이외의 정보가 보이지 않음
+get : http://abc.com
+post : http://abc.com:80/product?prdid=guest&reqnum=10&...
+파이썬은 데이터를 전달할 때 form - POST 방식을 주로 사용함.
+웹서버 : 클라이언트의 요청(request)을 처리하고, 결과를 클라이언트에게 응답(response)
+웹어플리케이션서버(WAS = Web Application Server) : 웹서버로부터 동적 페이지 요청을 받아, 
+요청 처리 및 결과를 웹서버에게 반환
+동적페이지 => python, jsp, php, ...
+ORM(Object Relational Mapping): 테이블을 모델로 만드므로 DB가 변경되더라도 상관없음.
+쿼리문이 아닌 모델을 사용하기 때문.
+
+게시판: 글번호, 제목, 작성자, 작성일, 작성시간, ....
+장고는 모델을 이용하여 테이블 생성/수정/삭제 등 작업
+
+질문 테이블(모델)
+질문제목, 질문내용, 질문작성일
+답변 테이블(모델)
+질문, 답변내용, 답변작성일
+
+
+1. mysite 실행후 django-admin startapp pybo 입력
+pybo라는 앱을 생성
+2. 127.0.0.1:8000을 실행후 주소뒤에 /pybo까지 입력후 실행
+당연히 에러나옴. urls.py에는 pybo가 없음
+http://127.0.0.1:8000/pybo : 프론트에 있는 직원에게 pybo(방문대상자) 위치?
+=> pybo url에 대한 매핑을 추가해야함(수첩에 pybo를 등록)
+3. urls.py에 코드 추가
+from pybo import views
+urlpatterns 에는
+path('pybo/', views.index) 코드를 작성
+=> pybo - views 파일 참고
+4. pybo - views.py 파일에 코드 작성
+from django.http import HttpResponse
+def index(request):
+    return HttpResponse('반갑습니다')
+위 코드를 작성 및 주소에 http://127.0.0.1:8000/pybo 입력 및 확인(반갑습니다가 나와야 함)
+5. 이번엔 urls.py의 path('pybo/', views.index)는 주석 후 아래 코드 추가
+ from django.urls import include
+ path('pybo/', include('pybo.urls'))
+6. pybo 폴더 안에 urls.py 파일 생성 후 아래 코드 작성
+from django.urls import path
+from . import views
+urlpatterns = [
+    path('', views.index)
+]
+
+
+질문 및 답변 테이블(모델) 만들기
+
+1. pybo폴더의 models.py에 코드 작성
+
+from django.db import models
+
+class Question(models.Model):
+    subject = models.CharField(max_length=200)
+    content = models.TextField()
+    create_date = models.DateTimeField()
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE) # 위의 질문이 삭제되면 답변도 삭제해라
+    content = models.TextField()
+    create_date = models.DateTimeField()
+
+2. 코드 작성후 cmd에서 (mysite가 실행된 상태에서) 'python manage.py makemigrations'입력
+3. 2번 진행후 python manage.py migrate 작성 및 실행
+4. 테이블 생성되었는지 확인
+
+아래(질문, 질문수정, 질문삭제)부터는 명령 프롬프트 작업
+질문하기
+
+1. cmd에서 (mysite실행상태) python manage.py shell 을 입력하여 shell상태로 파이썬 실행.
+2. from pybo.models import Question, Answer 입력 및 실행
+3. from django.utils import timezone 입력 및 실행
+4. q = Question(subject='pybo가 무엇인가요?', content='pybo에 대해 알려주세요', create_date=timezone.now()) 코드 입력 및 실행
+5. q.save() 입력 및 실행
+6. q 실행하면 Question: Question object (1)이라고 나옴.
+    6.1. q.id를 입력하면 1이 나옴
+7. q = Question(subject='장고 모델 질문', content='id는 자동으로 생성되나요?', create_date=timezone.now()) 코드 입력 및 실행
+8. q.save() 입력 및 실행
+9. q 실행하면 Question: Question object (2)이라고 나옴.
+10. Question.objects.all()을 실행하면 
+<QuerySet [<Question: Question object (1)>, <Question: Question object (2)>]>
+위와 같이 출력됨
+    10.1. Question.objects 실행하면
+<django.db.models.manager.Manager object at 0x000002204EB651E0>
+위와 같이 출력됨(저장된 메모리 주소인듯)
+
+Q&A 추가 작업
+1. models.py 파일에 Question 클래스에 코드 추가
+def __str__(self):
+    return self.subject
+2. cmd에서 ctrl + z 후 엔터를 눌러 shell 종료
+3. 다시 python manage.py shell 실행
+4. from pybo.models import Question, Answer 입력 및 실행
+5. Question.objects.all()을 실행하면 아래와 같이 출력됨
+<QuerySet [<Question: pybo가 무엇인가요?>, <Question: 장고 모델 질문>]>
+함수가 추가되었을 땐 콘솔만 재실행하면 결과에 반영이 됨
+하지만 클래스명같은 것이 변경되면 다시 마이그레이션을 해야 반영이 됨
+6. Question.objects.filter(id=1) 이와 같은 코드를 실행하면 id가 1인 것만 출력함.
+    6.1. Question.objects.get(id=1) 이 코드도 위와 같은 id가 1인 것을 출력.
+    6.2. Question.objects.filter(subject__contains='장고') 이렇게 subject의 입력된 조건 찾기도 가능함
+        <QuerySet [<Question: 장고 모델 질문>]>
+
+질문 변경하기
+1. q = Question.objects.get(id=2) 입력 및 실행
+2. q.subject='Django Model Question' 입력 및 실행
+3. q.save() 실행
+4. q 실행하여 확인 (Question.objects.all() 이 코드로 전체적으로 어떤 변화있는지 확인)
+
+
+질문 삭제
+1. q = Question.objects.get(id=1)
+2. q.delete() 실행
+3. Question.objects.all() 실행하여 확인
+
+
+답변하기
+
+1. q= Question.objects.get(id=2)
+2. from Question.utils import timezone
+3. a = Answer(question = q, content = '자동 생성됩니다.', create_date = timezone.now())
+4. a.save()
+5. Answer.objects.all()로 조회
+6. a = Answer.objects.get(id=1)
+7. a.question으로 답변의 질문 조회(결과 : <Question: Django Model Question>)
+
+
+
+
+
+
