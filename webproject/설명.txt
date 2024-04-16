@@ -17,6 +17,7 @@ sql 인젝션에 의한 공격이 보통 해킹순위 1,2위를 다툼
 
 장고는 빠르게 웹을 제작, 유지보수, 관리가 됨
 장고는 html, css, javascript는 알아야됨
+여기서 사용하는 장고는 4버전
 
 가상환경 설치방법
 
@@ -210,7 +211,93 @@ def __str__(self):
 7. a.question으로 답변의 질문 조회(결과 : <Question: Django Model Question>)
 
 
+관리자 계정 생성
+1. cmd에서 (mysite 실행상태에서) python manage.py createsuperuser 입력 및 실행
+2. 계정이름을 admin으로 설정
+3. 비밀번호는 임시로 1111로 설정
+4. 너무짧으며, 일상적이고 전부 숫자인데 그대로 할 거냐고 물으면 y입력
+5. 주소창에 127.0.0.1:8000/admin을 입력하면 로그인 창이 열림
+6. 관리자 계정을 입력하고 로그인
+7. 관리자 계정 로그인 완료
+
+데이터 연동(질문답변 테이블 연동)
+1. pybo - admin.py 열기
+2. 코드 작성
+from .models import Question
+admin.site.register(Question)
+3. 관리자 페이지 새로고침하면 Questions가 생김
+실제 등록까지도 가능한 상태가 됨(기본적으로 어느정도 세팅되어 있음)
+4. 관리자 답변 기능 추가 코드 작성
+from .models import Question, Answer
+admin.site.register(Answer)
+5. 답변기능 확인
 
 
+질문 검색기능 추가(확실히 php보다 훨씬 쉽게 만들어짐;;)
+1. 아래 코드 작성후 서버 재실행
+class QuestionAdmin(admin.ModelAdmin):
+    search_fields = ['subject']
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Question) <- (왼쪽 코드 삭제)
+2. 정상작동 확인(안되면 서버 재실행 혹은 코드 오타 확인)
+이 주소 참고해서 관리자 페이지 관리 가능 (https://docs.djangoproject.com/en/4.0/ref/contrib/admin/)
+
+질문 리스트 가져오기
+1. views.py 파일에 코드 작성
+(기존에 쓰던 index함수는 주석)
+from .models import Question
+def index(request):
+    question_list = Question.objects.order_by('-create_date')
+    context = {'question_list': question_list}
+    return render(request, 'pybo/question_list.html', context)
+
+order_by()함수 안에 -를 넣으면 내림차순이 됨(desc)
+render(request, 템플릿, 질문리스트(딕셔너리 형식)): 템플릿을 적용해 html로 변환하는 함수
+
+2. settings.py 파일의 TEMPLATES 코드 수정
+'DIRS':[BASE_DIR / 'templates'] # BASE_DIR = c:\projects\mysite
+3. cmd에서 서버종료 후 mkdir templates 입력 및 실행
+4. templates 폴더에 pybo 폴더 생성 후 question_list.html 파일 생성
+5. question_list.html 파일에 아래 코드 코드 작성
+{% if question_list %}
+    <ul>
+    {% for question in question_list %}
+        <li><a href="/pybo/{{ question.id }}/">{{ question.subject }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>질문이 없습니다.</p>
+{% endif %}
+
+위 코드는 템플릿 코드라고 볼 수 있음
+현재 링크는 만들어지는데 페이지는 pybo/1~ 이렇게 주소에 접속하므로 현재는 에러를 출력
+6. 서버 실행 및 서버 페이지 확인(127.0.0.1:8000/pybo)
+접속시 질문 제목이 적혀있어야 함
+
+
+질문리스트 클릭하여 질문페이지 이동
+1. pybo\urls.py 파일의 urlpatterns에 코드 추가
+path('<int:question_id>/', views.detail)
+2. views.py 안에 함수 추가
+def detail(request, question_id):
+    question = Question.objects.get(id=question_id)
+    context = {'question': question}
+    return render(request, 'pybo/question_detail.html', context)
+3. pybo폴더 안에 question_detail.html 파일 생성
+4. question_detail.html에 코드 추가
+<h1>{{ question.subject }}</h1>
+<div>
+    {{ question.content }}
+</div>
+5. 페이지 새로고침하여 확인
+
+
+잘못된 페이지 처리방법
+1. views.py에 코드 추가
+from django.shortcuts import render, get_object_or_404
+(기존 question 변수 주석 후)question = get_object_or_404(Question, pk=question_id)
+
+
+장고는 다음주까진 할 것
 
 
