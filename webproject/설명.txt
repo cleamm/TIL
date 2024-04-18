@@ -410,3 +410,180 @@ input[type=submit]{
     </table>
 </div>
 4. 서버에서 결과 확인
+
+
+--------------------------------------------------------------------------------
+
+4일차
+
+테이블 생성 : 모델 정의(Question, Answer) -> settings.py 에 installed_apps 항목 추가 -> 마이그레이션 수행
+1) 모델 생성/변경 등 작업시: python manage.py makemigrations
+2) 테이블 생성: python manage.py migrate
+3) 테이블명: pybo_question, pybo_answer 테이블 생성
+
+
+작업 시작
+
+1. question_detail.py 코드를 전부 삭제(혹은 주석)
+2. question_detail.py 에 코드 작성
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+<div class="container my-3">
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2">{{ question.subject }}</h2>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">{{ question.content }}</div>
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    {{ question.create_date }}
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- 답변 -->
+    <h5 class="border-bottom my-3 py-2">{{question.answer_set.count}}개의 답변이 있습니다.</h5>
+    {% for answer in question.answer_set.all %}
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    {{ answer.create_date }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+<!-- 답변 등록 -->
+    <form action="{% url 'pybo:answer_create' question.id %}" method="post" class="my-3">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="content" class="form-label">답변내용</label>
+            <textarea name="content" id="content" class="form-control" rows="10"></textarea>
+        </div>
+        <input type="submit" value="답변등록" class="btn btn-primary">
+    </form>
+</div>
+
+2.1. https://getbootstrap.com/docs/5.1/components/card/
+위 주소에 있는 부트스트랩을 참고하여 어떻게 꾸며졌는지 보면됨. 
+다만 우리 과정에서는 중요하지는 않다고 볼 수 있음
++ 웹 표준 html 구조라는 것이 있음
+- 어느 프로그램으로 보더라도 항상 동일하게 볼 수 있는 구조를 갖추는 것임.
+아래는 예시 코드임
+
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+    <title>Hello, pybo!</title>
+</head>
+<body>
+(... 생략 ...)
+</body>
+</html>
+
+
+템플릿 상속
+1. templates 폴더에 base.html 파일 생성 후 코드 작성
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+    <!-- pybo CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <title>Hello, pybo!</title>
+</head>
+<body>
+<!-- 기본 템플릿 안에 삽입될 내용 Start -->
+{% block content %}
+{% endblock %}
+<!-- 기본 템플릿 안에 삽입될 내용 End -->
+</body>
+</html>
+
+2. question_list.html 파일에서 코드 수정
+{load...}와 link 태그 삭제(혹은 주석) 이후
+{% extends 'base.html' %} 
+{% block content %}
+위 두 코드를 최상단(주석이 있다면 주석보다 위로 배치해야 에러가 안 나옴),
+{% endblock %} 을 최하단에 작성
+
+위와 같이 작성되면 표준 html 문서라고 할 수 있음
+3. question_detail파일도 2번과 동일하게 작업.
+위와 같은 작업을 하는 것이 '웹 표준 문서'임.
+4. style.css 코드는 중복되므로 내용 삭제(혹은 주석)
+
+
+질문하기 버튼 추가할 것임(127.0.0.1:8000/pybo 에 생성)
+(질문 리스트 페이지)에서 질문버튼 -> 질문 페이지 -> 질문 리스트 페이지=새로 등록된 질문이 인덱스 1번이 돼야함
+코드 순서
+1) question_list에 질문하기 버튼 생성
+2) 질문버튼 -> 질문작성 페이지 url 매핑
+Question 모델 사용
+3) 질문 저장 -> question_list를 다시 읽기
+기타 고려사항 : 필수 항목 설정
+
+질문 리스트 화면에서 질문하기 기능
+1. question_list.html에서 </table> 태그 밑에 코드 추가
+<a href="{% url 'pybo:question_create' %}">질문 등록하기</a>
+2. pybo/urls.py에 path 추가
+path('question/create/', views.question_create, name='question_create')
+3. forms.py 파일생성 및 코드 작성
+from django import forms
+from .models import Question
+class QuestionForm(forms.ModelForm): # 모델폼
+    class Meta: # 모델폼을 생성하면 반드시 필요한 클래스임
+        model = Question
+        fields = ['subject', 'content'] # QuestionForm 모델폼에서 사용할 Question 모델의 속성
+
+4. views.py 파일에 코드 추가
+from pybo.forms import QuestionForm
+def question_create(request):
+    form=QuestionForm()    
+    return render(request, 'pybo/question_form.html', {'form':form})
+5. templates/pybo 폴더 안에 question_form.html 생성 후 코드 작성
+{% extends 'base.html' %}
+{% block content%}
+<div>
+    <h5>질문등록하기</h5>
+    <button type="submit">저장하기</button>
+</div>
+{% endblock %}
+6. 확인 후 디자인 변경을 위해 div 태그부터 코드 3줄을 아래 코드로 수정
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">질문등록</h5>
+    <button type="submit" class="btn btn-primary">저장하기</button>
+7. h5태그 밑에 코드 추가
+    {{form.as_p}}
+8. 확인하기 (129.0.0.1:8000/pybo 부터 버튼과 모든 페이지 이동까지 되야함.)
+9. question_form파일에 form 태그 추가 
+<form method="post">
+{{csrf_token}}
+{{form.as_p}}   <!-- form을 전달받아서 html코드를 생성-->
+<button type="submit" class="btn btn-primary">저장하기</button>
+</form>
+10. 9번까지 완료되었으면 다시 테스트
+페이지 이동 및 질문등록 페이지에서 저장하기 버튼 누르면 글이 사라지는지 확인
+(실제 등록은 아직임)
+11. views.py 파일에서 question_create 함수 수정
+def question_create(request):
+    if request.method == 'POST': # post방식 -> (작성된 질문)저장하기
+        form = QuestionForm(request.POST)
+        if form.is_valid(): # 폼에 값이 올바르게 저장되었다면
+            question = form.save(commit=False) # 임시저장
+            question.create_date = timezone.now() # 작성일자 저장
+            question.save()
+            return redirect('pybo:index')
+    else: # get방식 -> 초기화면에서 '질문등록하기' 누른 상황 -> 질문폼
+        form = QuestionForm()
+    return render(request, 'pybo/question_form.html', {'form':form})
