@@ -587,3 +587,9 @@ def question_create(request):
     else: # get방식 -> 초기화면에서 '질문등록하기' 누른 상황 -> 질문폼
         form = QuestionForm()
     return render(request, 'pybo/question_form.html', {'form':form})
+
+-----5일차(휴가)-----
+네비게이션바, 페이지네이션 작업한듯
+-------- 6일차 ---------
+APS(삼성에서 하는)라는 것이 있다고 함.
+로그인 회원가입 등
