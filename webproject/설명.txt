@@ -593,3 +593,159 @@ def question_create(request):
 -------- 6일차 ---------
 APS(삼성에서 하는)라는 것이 있다고 함.
 로그인 회원가입 등
+
+파일 수정(5일차에 했던 걸로..)
+1. python manage.py shell 실행
+2. from pybo.models import Question
+3. from django.utils import timezone
+4. for i in range(300):
+5. 들여쓰기 후
+q = Question(subject='테스트 데이터입니다:[%03d]' % i, content='내용무', create_date=timezone.now())
+코드 입력
+6. 들여쓰기 후 q.save()
+7. 엔터치기
+8. 쉘 종료후 서버 재실행
+--여기까지가 5일차 진행내용--
+현재 문제점은 게시물의 번호가 항상 1~10까지로 고정되어 있음(페이지 상관없이)
+
+게시글 넘버링 수정
+1. cmd에서 서버 종료후 mysite상태에서 cd pybo
+2. mkdir templatetags 입력 및 실행
+3. templatetags 폴더 내에 pybo_filter.py 파일 생성
+4. 아래 코드를 작성
+from django import template
+register = template.Library()
+
+@register.filter
+def sub(value, arg): # 템플릿 필터 함수
+    return value-arg
+
+5. question_list.html 파일의 {% extends 'base.html' %} 밑에 코드 추가
+{% load pybo_filter %}
+6. 동일 파일에서 {% for question in question_list %} 밑에 있는 {{ forloop.counter }}를 변경
+ {{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1 }}
+7. cmd에서 cd .. 후 서버 재구동 후 결과 확인(게시글 넘버링이 내림차순으로 됨)
+
+게시글 리스트에서 답변 개수 출력
+1. question_list.html 파일에서 제목에 해당하는 내용 옆에 코드 추가해야됨
+<td><a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a></td>
+여기에 </a>태그 옆에 1을 붙이면 서버 실행상태에서 리스트를 보면 질문명1로 제목이 표기됨
+이는 정적인 코드임을 알수 있음
+2. 추가한 코드를 수정
+<td>
+                <a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a>
+                {% if question.answer_set.count > 0 %}
+                    <span class="text-danger small mx-2">답변: {{question.answer_set.count}}</span>
+                {% endif %}
+            </td>
+위와 같이 수정하여 답변의 개수가 1 이상이어야 숫자가 출력됨
+
+로그인/아웃(https://velog.io/@repday1/%EC%A0%90%ED%94%84-%ED%88%AC-%EC%9E%A5%EA%B3%A0-3%EC%9E%A5-%ED%8C%8C%EC%9D%B4%EB%B3%B4-%EC%84%9C%EB%B9%84%EC%8A%A4-%EA%B0%9C%EB%B0%9C%EB%82%B4%EB%B9%84%EA%B2%8C%EC%9D%B4%EC%85%98-%EA%B8%B0%EB%8A%A5-%ED%8E%98%EC%9D%B4%EC%A7%95-%EA%B8%B0%EB%8A%A5-%ED%85%9C%ED%94%8C%EB%A6%BF-%ED%95%84%ED%84%B0-%EC%A7%88%EB%AC%B8%EC%97%90-%EB%8B%AC%EB%A6%B0-%EB%8B%B5%EB%B3%80-%EA%B0%9C%EC%88%98-%ED%91%9C%EC%8B%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EB%A1%9C%EA%B7%B8%EC%95%84%EC%9B%83-%EA%B5%AC%ED%98%84)
+주소참고해서 작업해도 됨(사실 똑같음)
+1. 서버 종료 후(mysite만 실행상태) django-admin startapp common 입력 및 실행
+위 명령어를 실행해서 common 이라는 앱이 생성됨(mysite 폴더 안에 common 폴더 생성됨)
+2 settings.py 에서 installed_apps 안에 경로 추가
+'common.apps.CommonConfig'
+3. config/urls.py 파일을 열어서 urlpatterns 코드 추가
+path('common/', include('common.urls'))
+4. common 폴더에 urls.py 파일 생성 및 코드 작성
+from django.urls import path
+from django.contrib.auth import views as auth_views
+app_name = 'common'
+urlpatterns=[
+
+]
+5. navbar.html 파일에서 로그인 관련 내용 수정
+<a class="nav-link" href="#">로그인</a>
+위 코드를 아래와 같이 수정
+<a class="nav-link" href="{% url 'common:login' %}">로그인</a>
+6. common/urls.py 파일에서 urlpatterns에 코드 작성
+    path('login/', auth_views.LoginView.as_view(template_name='common/login.html'), name='login')
+여기까지는 아직 로그인 기능이 잘 안될 것임
+혹여나 로그인 버튼이 안보이면 창을 옆으로 늘리면 생김(아니면 우측상단의 3줄을 눌러보거나)
+해결방법은 mysite/static 폴더 내에 (bootstrap.min.js, jquery.min.js) 파일이 있어야 하며
+base.html에 아래 코드가 작성되어야 함
+<!-- Jquery JS -->
+<script src="{% static 'jquery-3.4.1.min.js' %}"></script>
+<!-- Bootstrap JS -->
+<script src="{% static 'bootstrap.min.js' %}"></script>
+파일은 직접 다운로드 받아서 경로에 맞게 이동해야됨...
+7. templates 폴더 내에 common 폴더 생성 및 common 폴더 안에 login.html 파일 생성
+8. 생성된 login.html 파일 내에 아래의 코드 작성
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-3">
+    <form method="post" action="{% url 'common:login' %}">
+        {% csrf_token %}
+        {% include "form_errors.html" %}
+        <div class="mb-3">
+            <label for="username">사용자ID</label>
+            <input type="text" class="form-control" name="username" id="username"
+                   value="{{ form.username.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="password">비밀번호</label>
+            <input type="password" class="form-control" name="password" id="password"
+                   value="{{ form.password.value|default_if_none:'' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">로그인</button>
+    </form>
+</div>
+{% endblock %}
+9. templates 폴더에 form_errors.html 생성후 코드 작성
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'pybo:index' %}">Pybo</a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">로그인</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+혹여나 로그이페이지로 안가면 navbar.html에서 로그인 문구의 코드확인
+<a class="nav-link" href="{% url 'common:login' %}">로그인</a>
+다르면 위와 같이 수정
+10. 직접 로그인 시도
+실제로 있는 계정은 초반에 생성한 admin계정밖에 없으므로 계속 틀렸다고 하는 것을 볼 수 있음.
+또한 입력항목을 비워도 문구를 띄우면서 안된다고 함.
+admin 계정으로 로그인시 페이지가 없으므로 에러페이지로 넘김. 이에 따라 추가작업 필요.
+11. config/settings.py 파일에 코드 추가
+LOGIN_REDIRECT_URL='/' # 로그인 성공시 페이지 이동 경로
+12. config/urls.py에 패턴 추가
+path('', views.index, name='index'),
+13. 서버 페이지 확인
+로그인시 메인 페이지로 이동하며 로그인 버튼은 아직 수정하지 않았으므로 로그인이라는 문구가 그대로 남아있음.
+14. navbar.html 에서  하단의 nav-item 클래스의 코드 수정
+<li class="nav-item">
+                    {% if user.is_authenticated %} <!-- 로그인 했다면 -->
+                        <a class="nav-link" href="{% url 'common:logout' %}">{{ user.username }} (로그아웃)</a>
+                    {% else %} <!-- 로그인을 안했다면 -->
+                        <a class="nav-link" href="{% url 'common:login' %}">로그인</a>
+                    {% endif %}
+                </li>
+15. common/urls.py 코드 추가
+from . import views
+urlpatterns에 path('logout/',views.logout_view, name='logout') 추가
+16. common/views.py 기본 코드 삭제 후 작성
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
+17. 로그인 및 로그아웃 기능 되는지 확인
+
+
+
