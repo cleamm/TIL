@@ -747,5 +747,224 @@ def logout_view(request):
 
 17. 로그인 및 로그아웃 기능 되는지 확인
 
+회원가입 기능 추가
+1. navbar 파일에 아래 코드 추가
+<li>
+    {% if not user.is_authenticated %}
+    <a class="nav-link" href="{% url 'common:signup' %}">회원가입</a>
+    {% endif %}
+</li>
+로그인이 안되어 있다면 회원가입이 보이도록 설정
+현재 상태에서는 로그아웃 상태가 되면 signup 에러가 출력됨
+2. common/urls.py 에 패턴 경로 추가
+    path('signup/', views.signup, name='signup')
+3. mysite/common 폴더에 forms.py 파일을 생성후 아래 코드 작성
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+class UserForm(UserCreationForm):
+    email = forms.EmailField(label="이메일")
+    class Meta:
+        model = User
+        fields = ("username", "password1", "password2", "email")
+4. common/views.py 에서 코드 추가
+from common.forms import UserForm
+def signup(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)  # 사용자 인증
+            login(request, user)  # 로그인
+            return redirect('index')
+    else:
+        form = UserForm()
+    return render(request, 'common/signup.html', {'form': form})
+5. templates/common 폴더 안에 signup.html 파일 생성 후 코드 작성
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-3">
+    <form method="post" action="{% url 'common:signup' %}">
+        {% csrf_token %}
+        {% include "form_errors.html" %}
+        <div class="mb-3">
+            <label for="username">사용자 이름</label>
+            <input type="text" class="form-control" name="username" id="username"
+                   value="{{ form.username.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="password1">비밀번호</label>
+            <input type="password" class="form-control" name="password1" id="password1"
+                   value="{{ form.password1.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="password2">비밀번호 확인</label>
+            <input type="password" class="form-control" name="password2" id="password2"
+                   value="{{ form.password2.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="email">이메일</label>
+            <input type="text" class="form-control" name="email" id="email"
+                   value="{{ form.email.value|default_if_none:'' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">생성하기</button>
+    </form>
+</div>
+{% endblock %}
+6. 서버 구동하여 확인
+회원가입시 아이디 multi, 비밀번호 ajfxlzoavjtm1 이메일 multi@multicampus.com로 설정
+http://localhost:8000/admin
+위 주소로 들어가서 로그인이 되는지 확인=admin만 로그인이 돼야 함
+장고의 자세한 사항은 아래 주소를 참고하여 개발하는 것을 추천
+https://docs.djangoproject.com/en/5.0/ref/models/fields/
+
+
+-----10일차----
+작성자 표시 기능 추가
+1. question_list.html 파일에 thead의 tr 태그 내에 번호, 제목, 작성자, 작성일시 순으로 수정
+2. 위를 실행해서 확인하고 question_list.html-thead태그 내의 코드 수정
+<tr class="text-center table-dark">
+    <th>번호</th>
+    <th style="width:50%">제목</th>
+    <th>작성자</th>
+    <th>작성일시</th>
+</tr>
+3. tbody 내의 첫번째 tr태그도 class="text-center" 추가
+4. 방금 작업한 tr태그 안의 첫번째 td태그에 class="text-start" 추가
+5. 현재 속해있는 tr태그에 td가 3개 있는데 이는 번호, 제목, 작성일시이므로 
+작성일시 위에 td태그 추가 작성
+<td>{{ question.author.username }}</td>
+6. 아래 tr에서 colspan 값을 4로 변경
+위 작업까지 마치면 메인페이지 확인시 가운데 정렬이 된 것을 확인할 수 있음
+다만 작성자는 아직 연결이 되지 않았으므로 빈 공간으로 남음
+7. pybo/models.py에서 코드 수정
+from django.contrib.auth.models import User
+Question 클래스에 author = models.ForeignKey(User, on_delete=models.CASCADE) 추가
+8. 서버 종료후(mysite는 실행된 상태) python manage.py makemigrations 실행
+- 이렇게 하면 선택지가 2개가 나오는데 여태까지의 author를 어떻게 할거냐는 대답의 선택지
+첫번째는 null로 설정 두번째는 임의로 지정하는 방법
+여기서는 1번을 선택할 것임
+9. 다시 1번을 입력
+1번을 선택한 것은 기존 게시물 작성자를 admin 계정으로 한다는 의미임
+10. python manage.py migrate 실행 후 서버 테스트
+11. models.py 에 Answer에도 question모델과 동일한 코드를 추가
+author = models.ForeignKey(User, on_delete=models.CASCADE)
+12. 다시 마이그레이션
+대체 마이그레이션이 무엇인가?
+- 모델에 변화가 있을 때 마이그레이션이라는 작업을 해야함.
+마이그레이션이라는 작업에는 makemigrations, migrate 라는 2가지 작업이 있음.
+마이그레이션이라는 것은 '변경 작업 지시서' 정도로 보면 됨
+makemigrations: 모델에 적용한 변경 내용을 바탕으로 새로운 migrations 파일을 생성 -> 모델의 변경사항을 기록
+migrate: migrations를 적용/해제하는 작업 -> 해당 migrations 파일을 DB에 반영
+13. pybo/views.py 코드 수정
+question_create함수 및 answer_create함수에 동일하게 적용
+...
+
+    question=form.save(commit=False)
+    question.author=request.user <- (question에서)추가 된 내용
+    answer.author=request.user <- (answer에서)추가 된 내용
+    
+...
+14. pybo/forms.py 에서 Meta 클래스 안에 코드 추가
+widgets = {
+            'subject': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+        }
+labels = {
+            'subject': '제목',
+            'content': '내용',
+        } <- 질문이 한글로 등록됨
+15. question_form.html 파일의 토큰 코드 밑에 코드 추가 
+{{form.as_p}} <- 코드 삭제
+<!-- 오류표시 Start -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field in form %}
+            {% if field.errors %}
+            <div>
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- 오류표시 End -->
+        <div class="mb-3">
+            <label for="subject" class="form-label">제목</label>
+            <input type="text" class="form-control" name="subject" id="subject"
+                   value="{{ form.subject.value|default_if_none:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" name="content"
+                      id="content" rows="10">{{ form.content.value|default_if_none:'' }}</textarea>
+        </div>
+
+위 코드를 작성하면 질문할 때 작성칸이 비어있으면 에러를 출력함
+16. pybo/forms.py  제일 아래에 코드 추가
+from .models import Question, Answer
+...(생략)
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['content']
+        labels = {
+            'content': '답변내용',
+        }
+17. pybo/views.py 에서 라이브러리 추가 및 answer_create함수 수정
+from django.http import HttpResponseNotAllowed
+from .forms import QuestionForm, AnswerForm
+...
+question = get_object_or_404(Question, pk=question_id) 한줄 남기고 함수의 코드 전체 삭제 후 아래 코드로 변경)
+    if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.create_date = timezone.now()
+            answer.question = question
+            answer.save()
+            return redirect('pybo:detail', question_id=question.id)
+    else:
+        return HttpResponseNotAllowed('Only POST is possible.')
+    context = {'question': question, 'form': form}
+    return render(request, 'pybo/question_detail.html', context)
+18. question_detail.html 파일에서 답변등록에 해당하는 코드에서 csrf_token 아래에 코드 추가
+<!-- 오류표시 Start -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field in form %}
+            {% if field.errors %}
+            <div>
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- 오류표시 End -->
+19. 답변 테스트
+현재 질문 등록, 답변 빈칸 확인 에러는 잘되지만 답변 등록은 에러가 나옴;;
+임시로 가능하도록 만들기 위해 수정필요
+20. pybo/models.py 파일에서 질문, 답변 모델 author에 모두 파라미터 추가
+author=models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+21. 마이그레이션 작업 후 서버 구동 및 답변 확인
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+이제 에러는 없어야 함. 질문 등록시 작성자가 로그인 되어 있는 계정으로 표시됨.
+
+
+
+
+
+
+
+
+
 
 
