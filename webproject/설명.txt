@@ -1053,6 +1053,151 @@ def question_modify(request, question_id):
 
 --------12일차---------
 
+글 삭제 기능
+1. question_detail.html에서 수정 밑에 삭제버튼 생성
+<a href="javascript:void(0)" data-uri="{% url 'pybo:question_delete' question.id %}" class="btn btn-sm btn-outline-secondary">삭제</a>
+javascript:void(0)는 링크를 클릭해도 아무런 작용을 하지 않음
+data-uri는 삭제해야될 url을 얻기 위해서 사용하는 것임.
+2. base.html을 열어서 </body> 태그 바로 위에 코드 추가
+<!-- 자바스크립트 Start -->
+{% block script %}
+{% endblock %}
+<!-- 자바스크립트 End -->
+3. question_detail의 endblock 밑에 자바스크립트 코드 추가
+{% block script %}
+<script type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
+{% endblock %}
+자바스크립트의 위치는 크게 상관없으며 의도하는 실행순서에 따라 배치하면 됨.
+4. pybo/urls.py에 path 추가
+path('question/delete/<int:question_id>/', views.question_delete, name='question_delete'),
+5. pybo/views.py에 함수 추가
+@login_required(login_url='common:login')
+def question_delete(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.user != question.author:
+        messages.error(request, '삭제권한이 없습니다')
+        return redirect('pybo:detail', question_id=question.id)
+    question.delete()
+    return redirect('pybo:index')
+현재 상태에선는 삭제가 이뤄지지 않음(에러도 없음)
+이에 따라 추가적인 수정이 필요함
+6. question_detail.html에서 삭제 버튼의 class에 'delete'를 추가
+이제 삭제 질문과 삭제 기능이 정상 작동하게 됨
 
+답변 수정 기능
+1. question_detail.html '답변' 구간 수정
+<div class="my-3">
+                {% if request.user == answer.author %}
+                    <a href="{% url 'pybo:answer_modify' answer.id  %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                {% endif %}
+            </div>
+사실상 작성 위치 및 코드는 질문 수정과 비슷함.
+2. pybo/urls.py 에 경로 추가
+path('answer/modify/<int:answer_id>/', views.answer_modify, name='answer_modify'),
+3. views.py에 코드 추가
+from .models import Question, Answer
+@login_required(login_url='common:login')
+def answer_modify(request, answer_id):
+    answer = get_object_or_404(Answer, pk=answer_id)
+    if request.user != answer.author:
+        messages.error(request, '수정권한이 없습니다')
+        return redirect('pybo:detail', question_id=answer.question.id)
+    if request.method == "POST":
+        form = AnswerForm(request.POST, instance=answer)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.modify_date = timezone.now()
+            answer.save()
+            return redirect('pybo:detail', question_id=answer.question.id)
+    else:
+        form = AnswerForm(instance=answer)
+    context = {'answer': answer, 'form': form}
+    return render(request, 'pybo/answer_form.html', context)
+4. 서버 구동하여 수정 버튼이 생성되었는지 확인
+5. templates/pybo 폴더 내에 answer_form.html 파일 생성후 코드 작성
+{% extends 'base.html' %}
+{% block content %}
+<!-- 답변 수정-->
+<div class="container my-3">
+    <form method="post">
+        {% csrf_token %}
+        {% include "form_errors.html" %}
+        <div class="mb-3">
+            <label for="content" class="form-label">답변내용</label>
+            <textarea class="form-control" name="content" id="content"
+                      rows="10">{{ form.content.value|default_if_none:'' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">저장하기</button>
+    </form>
+</div>
+{% endblock %}
+이제 변경이 잘 돼야함
+6. 답변 수정 테스트
 
+답변 삭제 기능
+1. question_detail.html 파일에서 답변의 수정 버튼 밑에 코드 추가
+<a href="#" data-uri="{% url 'pybo:answer_delete' answer.id %}" class="delete btn btn-sm btn-outline-secondary">삭제</a>
+2. pybo/urls.py 에 경로 추가
+path('answer/delete/<int:answer_id>/', views.answer_delete, name='answer_delete'),
+3.pybo/views.py 에 코드 추가
+@login_required(login_url='common:login')
+def answer_delete(request, answer_id):
+    answer = get_object_or_404(Answer, pk=answer_id)
+    if request.user != answer.author:
+        messages.error(request, '삭제권한이 없습니다')
+        return redirect('pybo:detail', question_id=answer.question.id)
+    answer.delete()
+    return redirect('pybo:index')
+이제 삭제 되는지 확인
 
+질문 및 답변 기능에 수정 기능 추가하기(직접 해보기)
+question_detail.html 파일에 질문 및 답변에 따라 코드를 조금씩 변경하여 코드 추가
+
+<div class="d-flex justify-content-end">
+                {% if question.modify_date %}
+                <div class="d-flex justify-content">
+                    <div class="badge bg-light text-dark p-2">
+                        <div class="mb-2">modified at</div>
+                        <div>{{ question.modify_date }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content">
+                    <div class="badge bg-light text-dark p-2">
+                        <div class="mb-2">{{ question.author.username }}</div>
+                        <div>{{ question.create_date }}</div>
+                    </div>
+                </div>
+            </div>
+<div class="d-flex justify-content-end">
+                {% if answer.modify_date %}
+                <div class="d-flex justify-content">
+                    <div class="badge bg-light text-dark p-2">
+                        <div class="mb-2">modified at</div>
+                        <div>{{ answer.modify_date }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content">
+                    <div class="badge bg-light text-dark p-2">
+                        <div class="mb-2">{{ answer.author.username }}</div>
+                        <div>{{ answer.create_date }}</div>
+                    </div>
+                </div>
+            </div>
+
+다양한 아이디어에 관한 이야기
+- 게시글을 작성한, 혹은 사용자의 프로필 확인 기능
+- 프로필 사진을 등록하는 것
+- 게시글의 조회수 출력 등
+- 이미지 등록?
+여러가지 프로젝트를 진행할 수 있음
