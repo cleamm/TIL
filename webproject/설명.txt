@@ -1201,3 +1201,223 @@ question_detail.html 파일에 질문 및 답변에 따라 코드를 조금씩 �
 - 게시글의 조회수 출력 등
 - 이미지 등록?
 여러가지 프로젝트를 진행할 수 있음
+
+view 쪼개기, 추천기능, 검색기능을 추가할 것임
+내일(5/2)부터는 데이터 분석 및 알고리즘의 본격적인 시작을 할 것임
+그리고 통계분석에 관련된 것도 배울 것임. 수학도... 
+장고까지는 워밍업 수준임. 이에 따라 웹 개발까지는 잘 못해도 문제없음
+
+
+views.py 파일에는 기능이 추가될수록 코드가 길어지므로 유지보수에 용이하도록 분리할 필요가 있음
+1. pybo/views 폴더 생성 및 views 폴더에 아래 파일 생성
+answer_views.py
+base_views.py
+question_views.py
+2. views.py에 있는 코드 detail, index 함수를 base_views로 이동 및 라이브러리 가져오기 설정
+from django.shortcuts import render, get_object_or_404, redirect
+from ..models import Question
+from django.core.paginator import Paginator
+위는 해당 라이브러리
+
+참고로 파이참 기능중 하나인데 ctrl + alt + O를 누르면 라이브러리 정리 기능이 있음
+툴별로 다르게 있을 것임
+3. question_views 파일에 question_delete, modify, create 함수 이동
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from ..models import Question
+from django.utils import timezone
+from ..forms import QuestionForm
+위는 해당 라이브러리
+
+4. answer_views 파일에 answer_delete, modify, create 함수 이동
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from ..models import Answer, Question
+from django.utils import timezone
+from ..forms import AnswerForm
+위는 해당 라이브러리
+
+5. pybo/views.py 파일을 삭제해도 됨
+pybo/urls.py 에서 경고문이 생겨나므로 경로를 수정해줘야 됨(코드를 이동했으므로)
+6. pybo/views 폴더 내에 __init__.py파일을 생성 및 코드 추가
+from .base_views import *
+from .answer_views import *
+from .question_views import *
+__init__은 파일을 연결하는 역할을 해줌. 다만 사용할 때 기존의 코드가 있는 파일을 가져와야 작동함
+6. 서버 실행(혹은 재실행)후 확인
+경로가 변경된 것이 적용되야 하므로 실행중이었다면 재실행해야 반영됨
+
+근데 이렇게 하면 경로관리가 어려워짐 (urls.py에서)
+이에 따라 urls.py에서 수정해야 되므로 추가작업
+7. 좀전에 생성한 __init__.py 파일 삭제
+8. pybo/urls.py의 경로 수정
+from .views import base_views, question_views, answer_views
+urlpatterns = [
+    # base_views.py
+    path('',
+         base_views.index, name='index'),
+    path('<int:question_id>/',
+         base_views.detail, name='detail'),
+
+    # question_views.py
+    path('question/create/',
+         question_views.question_create, name='question_create'),
+    path('question/modify/<int:question_id>/',
+         question_views.question_modify, name='question_modify'),
+    path('question/delete/<int:question_id>/',
+         question_views.question_delete, name='question_delete'),
+
+    # answer_views.py
+    path('answer/create/<int:question_id>/',
+         answer_views.answer_create, name='answer_create'),
+    path('answer/modify/<int:answer_id>/',
+         answer_views.answer_modify, name='answer_modify'),
+    path('answer/delete/<int:answer_id>/',
+         answer_views.answer_delete, name='answer_delete'),
+]
+9. config/urls.py 의 경로도 수정
+from pybo.views import base_views
+urlpatterns =[
+    ...
+    path('', base_views.index, name='index'),
+    ...
+]
+10. 서버 재실행 후 문제없는지 확인
+
+추천기능
+1. pybo/models.py에 추천 속성을 추가
+class Question():
+    ...
+    voter=models.ManyToManyField(User) # 추천자
+    def __str__(self):
+    ...
+이렇게 마이그레이션없이도 확인이 가능한데 cmd를 보면 에러가 나옴.
+voter 기준인지 author 기준인지 명확하지 않다는 에러임.
+이에 따라 코드를 추가 수정
+2. author, voter 수정
+author=models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_question', null=True)
+voter=models.ManyToManyField(User, related_name='voter_question') #추천자
+3. answer 모델도 동일하게 수정
+author=models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_answer', null=True)
+voter=models.ManyToManyField(User, related_name='voter_answer') #추천자
+4. 서버 중단 후 마이그레이션
+python manage.py makemigrations -> 이부분에서 선택지가 나오면 일단 취소(break)하고 서버 재구동 
+python manage.py migrate
+5. question_detail.html에서 답변항목 코드 추가
+<div class="my-3>
+    <a href="javascript:void(0)" data-uri="{% url 'pybo:question_vote' question.id  %}"
+               class="recommend btn btn-sm btn-outline-secondary"> 추천
+                <span class="badge rounded-pill bg-success">{{question.voter.count}}</span>
+            </a>
+            ....
+6. 파일에서 제일 아래에 block script가 있는데 안에 코드를 추가
+const recommend_elements = document.getElementsByClassName("recommend");
+Array.from(recommend_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 추천하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+
+const delete_elements = document.getElementsByClassName("delete");
+...
+7. pybo/urls.py 열어서 question 항목에 경로 추가
+    path('question/vote/<int:question_id>/', question_views.question_vote, name='question_vote'),
+8. pybo/views/question_views.py 로 이동하여 함수 추가
+@login_required(login_url='common:login')
+def question_vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.user == question.author:
+        messages.error(request, '본인이 작성한 글은 추천할 수 없습니다')
+    else:
+        question.voter.add(request.user)
+    return redirect('pybo:detail', question_id=question.id)
+9. 서버 테스트
+현 상태에서 답변은 추천이 가능하며 자신이 작성한 답변에는 추천이 안됨. 또한 추천을 2번이상 적용할 수 없음
+질문도 추천을 넣으려면 5번을 질문항목에 추가하면 됨
+
+게시물 검색 기능
+1. 서버 구동하여 임의질문을 2개 작성
+Q1사이킷런을 사용하는 목적은 무엇인가요?
+-머신러닝과 딥러닝을 위한 데이터 모델링 툴입니다.
+Q2넘파이 판다스를 사용하는 목적은 무엇인가요?
+-데이터 분석을 위한 필수 툴입니다
+2. question_list.html 코드 추가
+{% block content %}
+<div class = 'container my-3'>
+    <div class="row my-3">
+        <div class="col-6">
+            <a href="{% url 'pybo:question_create' %}" class="btn btn-primary">질문 등록하기</a>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    ....
+3. 하단에 작성되어 있는 '질문 등록하기' 코드를 삭제
+4. 서버에서 화면이 정상적으로 출력되는지, 질문 등록이 위로 이동하고 검색버튼이 있는지 확인
+실제 작동은 하지 않음
+5. question_list의 제일 아래 endblock 위에 form태그 생성 및 코드 작성
+<form  id="searchForm" method="get" action="{% url 'index' %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+</form>
+6. pagination 클래스의 ul에서 page-item클래스의 li태그의 코드를 변경
+ <a class="page-link" data-page="{{ question_list.previous_page_number }}" href="javascript:void(0)">이전</a>
+7. page-item active 클래스의 li 태그 안의 코드도 수정
+<a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+8. 7번 li 태그 아래의 li태그 내부 코드도 변경
+<a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+9. 다음페이지로 넘어가는 파트의 첫번째 li태그 안의 a태그 수정
+<a class="page-link" data-page="{{ question_list.next_page_number }}" href="javascript:void(0)">다음</a>
+10. endblock 밑에 코드 추가
+{% block script %}
+<script type='text/javascript'>
+const page_elements = document.getElementsByClassName("page-link");
+Array.from(page_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        document.getElementById('page').value = this.dataset.page;
+        document.getElementById('searchForm').submit();
+    });
+});
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener('click', function() {
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('page').value = 1;  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
+    document.getElementById('searchForm').submit();
+});
+</script>
+{% endblock %}
+
+11. base_views.py 코드 추가
+from django.db.models import Q
+def index(request):
+    kw = request.GET.get('kw', '')  # 검색어
+    question_list = Question.objects.order_by('-create_date')
+    if kw:
+        question_list = question_list.filter(
+            Q(subject__icontains=kw) |  # 제목 검색
+            Q(content__icontains=kw) |  # 내용 검색
+            Q(answer__content__icontains=kw) |  # 답변 내용 검색
+            Q(author__username__icontains=kw) |  # 질문 글쓴이 검색
+            Q(answer__author__username__icontains=kw)  # 답변 글쓴이 검색
+        ).distinct()
+    ...
+    context = {'question_list': page_obj, 'page': page, 'kw': kw}
+    ...
+12. 서버에서 검색이 되는지 확인
+해당되는 키워드의 질문,답변,작성자 등의 글을 출력하여 보여줌
+
+
+
+
+
+
