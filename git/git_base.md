@@ -93,3 +93,12 @@ https://www.toptal.com/developers/gitignore/
 # 주소에 사용하는 라이브러리, 환경, 언어 등을 작성하여 자동 생성하는 방법이 있음.(찌꺼기 처리)
 # 반드시 파일명은 .gitignore
 ```
+
+## `reset`
+```
+# 가장 최근에 커밋한 내용을 삭제(파일은 유지)
+git reset HEAD^
+
+# master에서 push한 커밋을 삭제
+git push -f origin master
+```
