@@ -38,3 +38,55 @@ https://cs231n.stanford.edu/
 
 머신러닝 딥러닝 용어
 https://wikidocs.net/179495
+https://vod.kehrd.com/1509/docs/document/learning_resources/copywriting_supplementary_learning.pdf
+
+
+자연어
+https://github.com/songys/AwesomeKorean_Data?tab=readme-ov-file
+
+머신러닝
+https://github.com/teddylee777/machine-learning
+
+
+
+
+프로젝트 참고 사이트
+
+1. LSTM 참고 사이트 
+https://wikidocs.net/173005
+
+- 날씨예측
+https://keras.io/examples/timeseries/timeseries_weather_forecasting/
+https://towardsdatascience.com/weather-forecasting-a-deep-learning-approach-7ecddff0fa71
+https://medium.com/analytics-vidhya/weather-forecasting-with-recurrent-neural-networks-1eaa057d70c3
+
+- LSTM 구조
+https://shiva-verma.medium.com/understanding-input-and-output-shape-in-lstm-keras-c501ee95c65e
+https://swlock.blogspot.com/2019/04/keras-lstm-understanding-input-and.html
+https://davinci-ai.tistory.com/30
+
+
+2. CNN 참고 사이트
+https://m.blog.naver.com/gaussian37/221132667027
+https://bskyvision.com/504
+https://www.kaggle.com/code/uysimty/keras-cnn-dog-or-cat-classification/notebook
+
+-강아지/고양이 분류기
+https://www.kaggle.com/code/uysimty/keras-cnn-dog-or-cat-classification/notebook
+
+
+3. opencv 및 YOLO
+
+https://076923.github.io/posts/Python-opencv-1/#opencv
+https://velog.io/@yooniverseis/YOLO-v5-%EC%8B%A4%EC%8A%B5%ED%95%B4%EB%B3%B4%EA%B8%B0
+https://blog.naver.com/jjunsss/222360843907
+https://roboflow.com/model/yolov5
+
+
+4. 파이토치 및 자연어처리
+https://wikidocs.net/book/2155
+https://wikidocs.net/book/2788
+
+
+파이썬 공부
+https://dojang.io/mod/page/view.php?id=2372
