@@ -17,5 +17,22 @@ int main(){
     // cin >> num;
     // cout << num << endl;
 
-    // return 0;
+    // cin.ignore(100, '\n');
+    // cin >> num;
+
+    // cout << user_input << " " << num << endl;
+
+
+
+    // 분기
+    int num;
+    cout << "숫자를 입력하세요:";
+    cin >> num; 
+    if (num > 10){
+        cout << "10보다 큽니다." << endl;
+    
+    }else{
+        cout << "10보다 작습니다." << endl;
+    }
+    return 0;
 }
