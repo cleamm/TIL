@@ -1,7 +1,7 @@
 import streamlit as st
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
+import joblib
 
 # Streamlit
 st.header("와인 종류 예측")
@@ -11,15 +11,9 @@ pH = st.slider('산의 농도', 0., 10., 3.)
 
 # 결정 트리
 wine = pd.read_csv('https://raw.githubusercontent.com/rickiepark/hg-mldl/master/wine.csv')
-X = wine[['alcohol', 'sugar', 'pH']].values
-y = wine['class']
 scaler = MinMaxScaler()
-X = scaler.fit_transform(X)
-clf = DecisionTreeClassifier(max_depth=36,
-                            min_impurity_decrease=0.00015640163917149342,
-                            min_samples_leaf=1,
-                            min_samples_split=2)
-clf.fit(X, y)
+X = scaler.fit_transform(wine[['alcohol', 'sugar', 'pH']].values)
+clf = joblib.load('wine_clf.joblib') # 모델 로드
 
 # 예측 버튼
 if st.button("와인 종류 예측하기"):
