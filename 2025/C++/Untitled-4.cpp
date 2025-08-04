@@ -145,25 +145,21 @@ int main() {
 
     // // 정수 N개가 주어졌을 때, 배열의 총합을 출력하세요.
     // // 입력: 5 1 2 3 4 5 → 출력: 15
-    int n;
-    cin >> n;
-    int sumNum = 0;
-    vector<int> nums(n);
-    for (int i=0; i<n; i++) cin >> nums[i];
-    for (int i=0; i<n; i++) sumNum += nums[i];
-    cout << sumNum << endl;
+    // int n;
+    // cin >> n;
+    // int sumNum = 0;
+    // vector<int> nums(n);
+    // for (int i=0; i<n; i++) cin >> nums[i];
+    // for (int i=0; i<n; i++) sumNum += nums[i];
+    // cout << sumNum << endl;
     
     
     // // 배열에서 가장 큰 값과 그 인덱스를 출력하세요.
     // // 입력: 10 5 3 9 2 → 출력: 10 0
     // vector<int> nums;
-    // int num;
-    // while(cin >> num){
-    //     nums.push_back(num); // 파이썬에서 list에 append하는 것과 같은 역할 함
-    // }
+    // int resIdx = 0, idx = 0, num;
+    // while(cin >> num) nums.push_back(num); // 파이썬에서 list에 append하는 것과 같은 역할
     // int maxNum = nums[0];
-    // int resIdx = 0;
-    // int idx = 0;
     // for (int x: nums) {
     //     if (x > maxNum) {
     //         maxNum = x;
@@ -203,6 +199,6 @@ int main() {
 
 
 
-    
+
     return 0;
 }
